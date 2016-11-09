@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/../Player.iml" filepath="$PROJECT_DIR$/../Player.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../app.player/app.player.iml" filepath="$PROJECT_DIR$/../app.player/app.player.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app.superplayer.iml" filepath="$PROJECT_DIR$/app.superplayer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../ijkplayerlibrary/ijkplayerlibrary.iml" filepath="$PROJECT_DIR$/../ijkplayerlibrary/ijkplayerlibrary.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../superplayerlibrary/superplayerlibrary.iml" filepath="$PROJECT_DIR$/../superplayerlibrary/superplayerlibrary.iml" />
+    </modules>
+  </component>
+</project>
