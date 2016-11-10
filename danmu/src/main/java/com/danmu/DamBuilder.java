@@ -15,6 +15,8 @@ import com.ufreedom.floatingview.effect.TranslateFloatingTransition;
 import java.util.ArrayList;
 import java.util.List;
 
+import danmu.dao.DanMu;
+
 /**
  * Created by Fischer on 2016/11/4.
  */
@@ -110,11 +112,11 @@ public class DamBuilder {
      * 发送弹幕
      * @param danmu
      */
-    public void sendDanmu(Danmu danmu) {
+    public void sendDanmu(DanMu danmu) {
         View viewDm = inflater.inflate(R.layout.danmu, null);
         TextView tvTxt = (TextView) viewDm.findViewById(R.id.txt);
         ImageView ivLike = (ImageView) viewDm.findViewById(R.id.icLike);
-        tvTxt.setText(danmu.damuText);
+        tvTxt.setText(danmu.getDanMuText());
         if(danmuTextColor != -1){
             tvTxt.setTextColor(danmuTextColor);
         }
@@ -123,7 +125,7 @@ public class DamBuilder {
         }
         if(likeVisible) {
             ivLike.setVisibility(View.VISIBLE);
-            ivLike.setOnClickListener(new OnDanmuLikeClick(danmu.damuId));
+            ivLike.setOnClickListener(new OnDanmuLikeClick(danmu.getDanMuId()));
         }else{
             ivLike.setVisibility(View.INVISIBLE);
         }
