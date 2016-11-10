@@ -1,7 +1,6 @@
 package com.danmu;
 
 import android.app.Activity;
-import android.content.Context;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +11,9 @@ import com.ufreedom.floatingview.Floating;
 import com.ufreedom.floatingview.FloatingBuilder;
 import com.ufreedom.floatingview.FloatingElement;
 import com.ufreedom.floatingview.effect.TranslateFloatingTransition;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Fischer on 2016/11/4.
@@ -33,11 +35,14 @@ public class DamBuilder {
     /** 点赞按钮点击事件 */
     private OnLickClickListener onLickClickListener;
 
+    private List<View> visibleDamus;
+
     public DamBuilder(Activity activity, View layer){
         this.activity = activity;
         this.root = layer;
         this.inflater = LayoutInflater.from(activity);
         this.floating = new Floating(activity);
+        visibleDamus = new ArrayList<>();
     }
 
     /**
@@ -71,16 +76,6 @@ public class DamBuilder {
     }
 
     /**
-     * 设置弹幕是否显示
-     * @param visible
-     * @return
-     */
-    public DamBuilder setDamVisible(boolean visible){
-        root.setVisibility(View.INVISIBLE);
-        return this;
-    }
-
-    /**
      * 设置是否显示点赞按钮
      * @param visible
      * @return
@@ -97,6 +92,17 @@ public class DamBuilder {
      */
     public DamBuilder setOnLikeClickListener(OnLickClickListener likeClickListener){
         this.onLickClickListener = likeClickListener;
+        return this;
+    }
+
+    public DamBuilder setDanmuVisible(boolean visible){
+        int len = visibleDamus.size();
+        for(int i = 0 ; i<len ; i++){
+            View v = visibleDamus.get(i);
+            if(v != null){
+                v.setVisibility(visible?View.VISIBLE:View.INVISIBLE);
+            }
+        }
         return this;
     }
 
@@ -126,7 +132,7 @@ public class DamBuilder {
         FloatingElement floatingElement = new FloatingBuilder()
                 .anchorView(root)
                 .targetView(viewDm)
-                .floatingTransition(new DamuFloating(activity,floatWidth,damuPos))
+                .floatingTransition(new DamuFloating(activity,floatWidth,damuPos,visibleDamus))
                 .build();
         floating.startFloating(floatingElement);
     }

@@ -6,6 +6,7 @@ import android.animation.ObjectAnimator;
 import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Path;
+import android.view.View;
 
 import com.ufreedom.floatingview.spring.SimpleReboundListener;
 import com.ufreedom.floatingview.spring.SpringHelper;
@@ -14,6 +15,8 @@ import com.ufreedom.floatingview.transition.FloatingPath;
 import com.ufreedom.floatingview.transition.PathPosition;
 import com.ufreedom.floatingview.transition.YumFloating;
 
+import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -27,10 +30,13 @@ public class DamuFloating extends BaseFloatingPathTransition {
     private DamuPos damuPos;
     private float pos;
 
-    public DamuFloating(Context ctx,int floatWidth,DamuPos damPos){
+    private List<View> visibleDamus;
+
+    public DamuFloating(Context ctx,int floatWidth,DamuPos damPos,List<View> visibleDamus){
         init(ctx);
         this.floatWidth = floatWidth;
         this.damuPos = damPos;
+        this.visibleDamus = visibleDamus;
         pos = caculatePos();
     }
 
@@ -81,7 +87,7 @@ public class DamuFloating extends BaseFloatingPathTransition {
     @Override
     public void applyFloating(final YumFloating yumFloating) {
 
-        ValueAnimator translateAnimator = ObjectAnimator.ofFloat(getStartPathPosition(), getEndPathPosition());
+        final ValueAnimator translateAnimator = ObjectAnimator.ofFloat(getStartPathPosition(), getEndPathPosition());
         translateAnimator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
             @Override
             public void onAnimationUpdate(ValueAnimator valueAnimator) {
@@ -100,9 +106,12 @@ public class DamuFloating extends BaseFloatingPathTransition {
                 yumFloating.setTranslationY(0);
                 yumFloating.setAlpha(0f);
                 yumFloating.clear();
+                View view = yumFloating.getTargetView();
+                if (view != null) {
+                    visibleDamus.remove(view);
+                }
             }
         });
-
 
         SpringHelper.createWidthBouncinessAndSpeed(0.0f, 1.0f, 14, 15)
                 .reboundListener(new SimpleReboundListener() {
@@ -115,6 +124,9 @@ public class DamuFloating extends BaseFloatingPathTransition {
 
         translateAnimator.setDuration(10000);
         translateAnimator.start();
+
+        View view = yumFloating.getTargetView();
+        visibleDamus.add(view);
     }
 
     /**

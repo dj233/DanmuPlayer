@@ -1,1 +1,1 @@
-include ':appDanmuDemo', ':danmu', ':FloatingViewLib', ':superplayerlibrary', ':ijkplayerlibrary', ':app.superplayer'
+include ':superplayerlibrary', ':ijkplayerlibrary', ':app.superplayer', ':danmu', ':FloatingViewLib'
