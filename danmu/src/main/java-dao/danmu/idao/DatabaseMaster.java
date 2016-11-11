@@ -59,7 +59,7 @@ public class DatabaseMaster {
 
     }
 
-    public DanMuDaoWrapper getChannelDaoWrapper() {
+    public DanMuDaoWrapper getDanMuDaoWrapper() {
         return danMuDaoWrapper;
     }
 

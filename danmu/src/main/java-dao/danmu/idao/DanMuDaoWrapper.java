@@ -26,11 +26,11 @@ public class DanMuDaoWrapper {
         mDao.insert(danMu);
     }
 
-    private List<DanMu> listAll(){
+    public List<DanMu> listAll(){
         return mDao.loadAll();
     }
 
-    private List<DanMu> listOrderByTick(){
+    public List<DanMu> listOrderByTick(){
         return mDao.queryBuilder().orderAsc(DanMuDao.Properties.DanMuTick).list();
     }
 

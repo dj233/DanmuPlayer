@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import danmu.dao.DanMu;
+import danmu.idao.DanMuDaoWrapper;
+import danmu.idao.DatabaseMaster;
+import rx.Observable;
 
 /**
  * Created by Fischer on 2016/11/4.
@@ -39,12 +42,18 @@ public class DamBuilder {
 
     private List<View> visibleDamus;
 
+    private DatabaseMaster dbMaster;
+    private DanMuDaoWrapper danmDaoWrapper;
+
     public DamBuilder(Activity activity, View layer){
         this.activity = activity;
         this.root = layer;
         this.inflater = LayoutInflater.from(activity);
         this.floating = new Floating(activity);
         visibleDamus = new ArrayList<>();
+        dbMaster = DatabaseMaster.instc();
+        dbMaster.init(activity);
+        danmDaoWrapper = dbMaster.getDanMuDaoWrapper();
     }
 
     /**
@@ -113,6 +122,9 @@ public class DamBuilder {
      * @param danmu
      */
     public void sendDanmu(DanMu danmu) {
+
+        saveDanmu2Db(danmu);
+
         View viewDm = inflater.inflate(R.layout.danmu, null);
         TextView tvTxt = (TextView) viewDm.findViewById(R.id.txt);
         ImageView ivLike = (ImageView) viewDm.findViewById(R.id.icLike);
@@ -137,6 +149,18 @@ public class DamBuilder {
                 .floatingTransition(new DamuFloating(activity,floatWidth,damuPos,visibleDamus))
                 .build();
         floating.startFloating(floatingElement);
+    }
+
+    public List<DanMu> loadDanMus(){
+        return danmDaoWrapper.listOrderByTick();
+    }
+
+    public Observable<List<DanMu>> obsDanMus(){
+        return danmDaoWrapper.observOrderByIndex();
+    }
+
+    private void saveDanmu2Db(DanMu danMu){
+        danmDaoWrapper.add(danMu);
     }
 
     private int getFloatWidth(View v){
