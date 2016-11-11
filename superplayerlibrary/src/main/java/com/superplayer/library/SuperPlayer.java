@@ -114,6 +114,7 @@ public class SuperPlayer extends RelativeLayout{
 	private boolean isSupportGesture = false;//是否至此手势操作，false ：小屏幕的时候不支持，全屏的支持；true : 小屏幕还是全屏都支持
 	private boolean isPrepare = false;// 是否已经初始化播放
 	private boolean isNetListener = true;// 是否添加网络监听 (默认是监听)
+	private boolean isDanmuOpen = true;
 	// 网络监听回调
 	private NetChangeReceiver netChangeReceiver;
 	private OnNetChangeListener onNetChangeListener;
@@ -164,6 +165,8 @@ public class SuperPlayer extends RelativeLayout{
 				isNetListener = false;// 取消网络的监听
 				$.id(R.id.view_jky_player_tip_control).gone();
 				play(url, currentPosition);
+			} else if (v.getId() == R.id.view_jky_player_danmu) {
+				toggleDanmu();
 			}
 		}
 	};
@@ -198,6 +201,15 @@ public class SuperPlayer extends RelativeLayout{
 	public SuperPlayer setTitle(CharSequence title) {
 		$.id(R.id.app_video_title).text(title);
 		return this;
+	}
+
+	private void toggleDanmu(){ //TODO　弹幕开关
+		isDanmuOpen = !isDanmuOpen;
+		if(isDanmuOpen){
+			$.id(R.id.view_jky_player_danmu).image(R.drawable.ic_danmu_open);
+		}else{
+			$.id(R.id.view_jky_player_danmu).image(R.drawable.ic_danmu_close);
+		}
 	}
 
 	private void doPauseResume() {
@@ -461,6 +473,7 @@ public class SuperPlayer extends RelativeLayout{
 		$.id(R.id.app_video_finish).clicked(onClickListener);
 		$.id(R.id.view_jky_player_center_play).clicked(onClickListener);
 		$.id(R.id.view_jky_player_tv_continue).clicked(onClickListener);
+		$.id(R.id.view_jky_player_danmu).clicked(onClickListener);
 
 		audioManager = (AudioManager) activity
 				.getSystemService(Context.AUDIO_SERVICE);
