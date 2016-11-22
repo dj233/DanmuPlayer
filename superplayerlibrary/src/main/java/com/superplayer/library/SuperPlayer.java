@@ -23,17 +23,33 @@ import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import com.danmu.DamBuilder;
+import com.danmu.DamuFloating;
 import com.superplayer.library.mediaplayer.IRenderView;
 import com.superplayer.library.mediaplayer.IjkVideoView;
 import com.superplayer.library.utils.NetUtils;
 import com.superplayer.library.utils.SuperPlayerUtils;
 
+import org.w3c.dom.Text;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
+
+import danmu.dao.DanMu;
+import rx.Observable;
+import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Action1;
+import rx.schedulers.Schedulers;
 import tv.danmaku.ijk.media.player.IMediaPlayer;
 import tv.danmaku.ijk.media.player.IjkMediaPlayer;
 
@@ -123,6 +139,11 @@ public class SuperPlayer extends RelativeLayout{
 	private int defaultTimeout = 3000;
 	private int screenWidthPixels;
 
+	private TextView tvDanMuTarget;
+	private DamBuilder danMuBuilder;
+	private Timer danMuTimer;
+	private List<DanMu> mDanMuList;
+
 	public SuperPlayer(Context context) {
 		this(context, null);
 	}
@@ -137,6 +158,7 @@ public class SuperPlayer extends RelativeLayout{
 		activity = (Activity) this.context;
 		//初始化view和其他相关的
 		initView();
+		initDanMu();
 	}
 
 	/**
@@ -203,13 +225,50 @@ public class SuperPlayer extends RelativeLayout{
 		return this;
 	}
 
-	private void toggleDanmu(){ //TODO　弹幕开关
+	private void initDanMu(){
+		danMuBuilder = new DamBuilder(activity,tvDanMuTarget);
+		danMuBuilder.setDamPos(DamuFloating.DamuPos.But);
+		danMuTimer = new Timer();
+		loadDanMuList();
+	}
+
+	private void loadDanMuList(){
+		Observable<List<DanMu>> danMuListObs = null;
+//		danMuListObs = danMuBuilder.obsDanMus();
+		//TODO　模拟弹幕
+		danMuListObs = Observable.create(new Observable.OnSubscribe<List<DanMu>>() {
+
+			@Override
+			public void call(Subscriber<? super List<DanMu>> subscriber) {
+				List<DanMu> vDanms = new ArrayList<DanMu>(50);
+				for(int i = 0;i<50;i++){
+					DanMu dm = new DanMu(i,"解放军第_"+i,i*1000+1);
+					vDanms.add(dm);
+				}
+				subscriber.onNext(vDanms);
+				subscriber.onCompleted();
+			}
+		});
+
+		danMuListObs.subscribeOn(Schedulers.io())
+				.observeOn(AndroidSchedulers.mainThread())
+				.subscribe(new Action1<List<DanMu>>() {
+					@Override
+					public void call(List<DanMu> danMuList) {
+						mDanMuList = danMuList;
+					}
+				});
+	}
+
+	private void stopDanMu(){
+		danMuTimer.cancel();
+	}
+
+	private void toggleDanmu(){
 		isDanmuOpen = !isDanmuOpen;
-		if(isDanmuOpen){
-			$.id(R.id.view_jky_player_danmu).image(R.drawable.ic_danmu_open);
-		}else{
-			$.id(R.id.view_jky_player_danmu).image(R.drawable.ic_danmu_close);
-		}
+		int danMuIconRes = isDanmuOpen?R.drawable.ic_danmu_open:R.drawable.ic_danmu_close;
+		$.id(R.id.view_jky_player_danmu).image(danMuIconRes);
+		danMuBuilder.setDanmuVisible(isDanmuOpen);
 	}
 
 	private void doPauseResume() {
@@ -401,6 +460,7 @@ public class SuperPlayer extends RelativeLayout{
 		screenWidthPixels = activity.getResources().getDisplayMetrics().widthPixels;
 		$ = new Query(activity);
 		contentView = View.inflate(context, R.layout.view_super_player, this);
+		tvDanMuTarget = (TextView) contentView.findViewById(R.id.tv_damu_target);
 		videoView = (IjkVideoView) contentView.findViewById(R.id.video_view);
 		videoView
 				.setOnCompletionListener(new IMediaPlayer.OnCompletionListener() {
@@ -558,6 +618,7 @@ public class SuperPlayer extends RelativeLayout{
 		if (!isLive && newStatus == STATUS_COMPLETED) {// 当视频播放完成的时候
 			handler.removeMessages(MESSAGE_SHOW_PROGRESS);
 			hideAll();
+			stopDanMu();
 			if (isShowCenterControl) {
 				$.id(R.id.view_jky_player_center_control).visible();
 			}
@@ -967,6 +1028,15 @@ public class SuperPlayer extends RelativeLayout{
 
 		long position = videoView.getCurrentPosition();
 		long duration = videoView.getDuration();
+
+		for(int i = 0,len = mDanMuList.size();i<len;i++){
+			DanMu danMu = mDanMuList.get(i);
+			int posDm = danMu.getDanMuTick();
+			if(Math.abs(position-posDm)<100){
+				danMuBuilder.sendDanmu(danMu);
+			}
+		}
+
 		if (seekBar != null) {
 			if (duration > 0) {
 				long pos = 1000L * position / duration;

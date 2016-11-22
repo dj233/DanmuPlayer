@@ -25,7 +25,7 @@ public class DanMuDao extends AbstractDao<DanMu, Void> {
     public static class Properties {
         public final static Property DanMuId = new Property(0, int.class, "danMuId", false, "danmu_id");
         public final static Property DanMuText = new Property(1, String.class, "danMuText", false, "danmu_text");
-        public final static Property DanMuTick = new Property(2, long.class, "danMuTick", false, "danmu_tick");
+        public final static Property DanMuTick = new Property(2, int.class, "danMuTick", false, "danmu_tick");
     };
 
 
@@ -73,7 +73,7 @@ public class DanMuDao extends AbstractDao<DanMu, Void> {
         DanMu entity = new DanMu( //
             cursor.getInt(offset + 0), // danMuId
             cursor.getString(offset + 1), // danMuText
-            cursor.getLong(offset + 2) // danMuTick
+            cursor.getInt(offset + 2) // danMuTick
         );
         return entity;
     }
@@ -83,7 +83,7 @@ public class DanMuDao extends AbstractDao<DanMu, Void> {
     public void readEntity(Cursor cursor, DanMu entity, int offset) {
         entity.setDanMuId(cursor.getInt(offset + 0));
         entity.setDanMuText(cursor.getString(offset + 1));
-        entity.setDanMuTick(cursor.getLong(offset + 2));
+        entity.setDanMuTick(cursor.getInt(offset + 2));
      }
     
     /** @inheritdoc */

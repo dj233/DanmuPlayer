@@ -16,6 +16,10 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"/>
 
+    <TextView
+        android:id="@+id/tv_damu_target"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
     <!--<include layout="@layout/view_super_player_center" />
 
     &lt;!&ndash; bottom &ndash;&gt;

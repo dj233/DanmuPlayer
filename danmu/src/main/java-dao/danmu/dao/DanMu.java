@@ -9,12 +9,12 @@ public class DanMu {
     private int danMuId;
     /** Not-null value. */
     private String danMuText;
-    private long danMuTick;
+    private int danMuTick;
 
     public DanMu() {
     }
 
-    public DanMu(int danMuId, String danMuText, long danMuTick) {
+    public DanMu(int danMuId, String danMuText, int danMuTick) {
         this.danMuId = danMuId;
         this.danMuText = danMuText;
         this.danMuTick = danMuTick;
@@ -38,11 +38,11 @@ public class DanMu {
         this.danMuText = danMuText;
     }
 
-    public long getDanMuTick() {
+    public int getDanMuTick() {
         return danMuTick;
     }
 
-    public void setDanMuTick(long danMuTick) {
+    public void setDanMuTick(int danMuTick) {
         this.danMuTick = danMuTick;
     }
 

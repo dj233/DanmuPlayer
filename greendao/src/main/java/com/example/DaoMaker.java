@@ -25,6 +25,6 @@ public class DaoMaker {
         weatherIcon.setTableName("tb_danmu");
         weatherIcon.addIntProperty("danMuId").columnName("danmu_id").notNull();
         weatherIcon.addStringProperty("danMuText").columnName("danmu_text").notNull();
-        weatherIcon.addLongProperty("danMuTick").columnName("danmu_tick").notNull();
+        weatherIcon.addIntProperty("danMuTick").columnName("danmu_tick").notNull();
     }
 }
